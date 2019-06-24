@@ -1,0 +1,198 @@
+#Options
+GenerateScanner = true
+GenerateParser = true
+Language = Java
+ScannerName = Lexico
+ParserName = Sintatico
+SemanticName = Semantico
+Package = Pacote
+ScannerCaseSensitive = true
+ScannerTable = Full
+Input = Stream
+Parser = SLR
+#RegularDefinitions
+letras: [a-zA-Z]
+num: [0-9]
+biggerThan: [>]
+lessThan: [<]
+semicolon: [;]
+ws: [\t\ \r\n]
+sum: [\+]
+minus: [\-]
+mult: [\*]
+div: [/]
+aspas: [\"]
+#Tokens
+var: {letras}({letras}|{num})*
+number: {num}+
+doubleNumber: {num}+.{num}+
+valStr: \"([^\",\n])*\"
+:{ws}
+if = var:"if"
+else = var:"else"
+elif = var:"elif"
+print = var:"print"
+println = var:"println"
+while = var:"while"
+in = var:"in"
+for = var:"for"
+fun = var:"fun"
+class = var:"class"
+abreChave:"{"
+fechaChave:"}"
+abreParentese: "("
+fechaParentese: ")"
+int = var:"int"
+str = var:"str"
+double = var:"double"
+float = var:"float"
+void = var:"void"
+main = var:"main"
+this = var:"this"
+new = var:"new"
+dot: "."
+comma: ","
+semicolon: ";"
+
+biggerThan: {biggerThan}
+lessThan: {lessThan}
+compare: "=="
+attribution: "="
+semicolon: {semicolon}
+sum: {sum}
+minus: {minus}
+mult: {mult}
+div: {div}
+and: "&&"
+startComment: "/*"
+closeComment: "*/"
+
+
+//Exemplo de entrada
+
+
+//void main() {
+//Definição de váriavel
+//  a = 10;
+
+//Operação Soma
+//
+// b = 5 + 2
+//
+//  Operador lógico
+//
+// if (x > 2) {
+//     print x
+// }else{
+//    print 2
+//}
+//}
+
+//Exemplo função
+//fun soma(int a,int b) {
+//   a = a + b;
+//}
+
+//Exemplo classe
+// class Ola {
+//
+//
+// }
+
+
+
+
+#NonTerminals
+<PROGRAM_LIST>
+<PROGRAM>
+<MAIN>
+<MAIN_NAME> 
+<FUN>
+<START>
+<FUN_NAME>
+<CLASS>
+<CLASS_NAME>
+<OPEN>
+<PARAMS_LIST>
+<CLOSE>
+<START_BLOCK>
+<WORDS_LIST> 
+<WORDS>
+<TYPE>
+<PARAMS>
+<CLOSE_BLOCK>
+<LOGIC_LIST>
+<LOGIC>
+<LOGIC1>
+<LOGIC2>
+<LOGIC3>
+<SUM>
+<MINUS>
+<MULT> 
+<DIV>
+<COMMANDS>
+<ATT>
+<IF>
+<FOR>
+<WHILE>
+<COND>
+<PRINT>
+<HAS_IN_PROGRAM>
+<CALL>
+<OBJ_NAME>
+<LIST_COMMANDS>
+<CALL_FUN>
+#Grammar
+<PROGRAM_LIST> ::= <PROGRAM_LIST> <PROGRAM> | <PROGRAM>;
+<PROGRAM> ::= <MAIN> | <FUN> | <CLASS>;
+
+<CLASS> ::= class <CLASS_NAME> <START_BLOCK> <LIST_COMMANDS> <CLOSE_BLOCK>;
+<CLASS_NAME> ::= var;
+
+<MAIN> ::= <START> <MAIN_NAME> <OPEN> <CLOSE> <START_BLOCK> <LIST_COMMANDS> <CLOSE_BLOCK>;
+<MAIN_NAME> ::= main;
+
+<FUN> ::= <START> var <OPEN> <PARAMS_LIST> <CLOSE> <START_BLOCK> <LIST_COMMANDS>  <CLOSE_BLOCK> | <START> var <OPEN>  <CLOSE> <START_BLOCK> <LIST_COMMANDS>  <CLOSE_BLOCK>;
+<START> ::= fun | void;
+<WORDS> ::= var | number;
+<OPEN> ::= abreParentese;
+
+<PARAMS_LIST> ::= <PARAMS_LIST> <PARAMS> | <PARAMS> | <TYPE> <PARAMS> comma <TYPE> <PARAMS>;
+<TYPE> ::= int | str | double | float;
+<PARAMS> ::= var | number | valStr | doubleNumber; 
+<CLOSE> ::= fechaParentese;
+<START_BLOCK> ::= abreChave;
+//<LOGIC_LIST> ::= <LOGIC_LIST> <LOGIC> | <LOGIC> | <LOGIC_LIST> <LOGIC1> | <LOGIC1> | <LOGIC_LIST> <LOGIC2> | <LOGIC2> | <LOGIC_LIST> <LOGIC3> | <LOGIC3>;
+<LOGIC> ::= <LOGIC> <SUM> <LOGIC1> | <LOGIC1>;
+<LOGIC1> ::= <LOGIC1> <MINUS> <LOGIC2> | <LOGIC2>;
+<LOGIC2> ::= <LOGIC2> <MULT> <LOGIC3> | <LOGIC3>;
+<LOGIC3> ::= <LOGIC3> <DIV> <PARAMS> | <PARAMS> | abreParentese <LOGIC> fechaParentese;
+<SUM> ::= sum;
+<MINUS> ::= minus;
+<MULT> ::= mult;
+<DIV> ::= div;
+<COMMANDS> ::=  <ATT> semicolon | startComment <ATT> closeComment  | <IF> | startComment <IF> closeComment | <FOR> | startComment <FOR> closeComment | <WHILE>| startComment <WHILE> closeComment | <PRINT> semicolon
+ | startComment <PRINT> closeComment | <CALL> dot <HAS_IN_PROGRAM> attribution <LOGIC> | startComment <CALL> dot <HAS_IN_PROGRAM> attribution <LOGIC> closeComment | <CALL_FUN>;
+<LIST_COMMANDS> ::= <LIST_COMMANDS> <COMMANDS> | <COMMANDS>;
+
+<CALL_FUN> ::= var abreParentese fechaParentese semicolon;
+
+<ATT> ::=  <TYPE> var attribution <LOGIC> | var attribution new <OBJ_NAME> abreParentese fechaParentese | var attribution <LOGIC>;
+<IF> ::= if <OPEN> <PARAMS> <COND> <PARAMS>  <CLOSE> <START_BLOCK> <LIST_COMMANDS> <CLOSE_BLOCK>
+ | if <OPEN> <PARAMS> <COND> <PARAMS> and <PARAMS> <COND> <PARAMS> <CLOSE> <START_BLOCK> <LIST_COMMANDS> <CLOSE_BLOCK>
+ | if <OPEN> <PARAMS> <COND> <PARAMS> <CLOSE> <START_BLOCK> <LIST_COMMANDS> <CLOSE_BLOCK> else <START_BLOCK> <LIST_COMMANDS> <CLOSE_BLOCK> 
+ | if <OPEN> <PARAMS> <COND> <PARAMS>  <CLOSE> <START_BLOCK> <LIST_COMMANDS> <CLOSE_BLOCK> elif <OPEN> <PARAMS> <COND> <PARAMS> and <PARAMS> <COND> <PARAMS> <CLOSE> <START_BLOCK> <LIST_COMMANDS> <CLOSE_BLOCK> else <START_BLOCK> <LIST_COMMANDS> <CLOSE_BLOCK> 
+ | if <OPEN> <PARAMS> <COND> <PARAMS>  <CLOSE> <START_BLOCK> <LIST_COMMANDS> <CLOSE_BLOCK> elif <OPEN> <PARAMS> <COND> <PARAMS>  <CLOSE> <START_BLOCK> <LIST_COMMANDS> <CLOSE_BLOCK> else <START_BLOCK> <LIST_COMMANDS> <CLOSE_BLOCK> 
+ | if <OPEN> <PARAMS> <COND> <PARAMS>  <CLOSE> <START_BLOCK> <LIST_COMMANDS> <CLOSE_BLOCK> elif <OPEN> <PARAMS> <COND> <PARAMS>  <CLOSE> <START_BLOCK> <LIST_COMMANDS> <CLOSE_BLOCK>;
+<OBJ_NAME> ::= var | number;
+
+<FOR> ::= for abreParentese var lessThan <PARAMS> fechaParentese  <START_BLOCK> <LIST_COMMANDS> <CLOSE_BLOCK>;
+<WHILE> ::= while abreParentese var <COND> <WORDS> fechaParentese <START_BLOCK> <LIST_COMMANDS> <CLOSE_BLOCK>;
+<COND> ::= biggerThan | lessThan | attribution | compare;
+<PRINT> ::= print <LOGIC> | println <LOGIC>;
+<CALL> ::= this;
+<HAS_IN_PROGRAM> ::= var;
+
+//<LOGIC> ::= var | number |  if | else | print | biggerThan | lessThan | compare | attribution | semicolon | abreParentese | fechaParentese | int | str | double | float | î;
+<CLOSE_BLOCK> ::= fechaChave;
+

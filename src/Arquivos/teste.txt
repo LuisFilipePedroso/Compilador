@@ -1,0 +1,31 @@
+fun soma(int a, int b) {
+    int c = a + b;
+    println("A soma é: " + c);
+}
+
+fun subtract(int a, int b) {
+    int c = a - b;
+    println("A subtração é: " + c);
+}
+
+fun mult(int a, int b) {
+    int c = a * b;
+    println("A multiplicação é: " + c);
+}
+
+void main() {
+    println("Adição");
+    soma(2, 4);
+
+    println("");
+    println("Subtração");
+    subtract(4, 2);
+
+    int i = 0;
+    println("");
+    println("Multiplicação");
+    while(i < 10) {
+        mult(i, i + 2); 
+        i+=1;
+    }
+}
